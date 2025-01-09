@@ -1,1 +1,20 @@
-
+apiVersion: apps/v1             # Specify the API version for the Deployment resource
+kind: Deployment                # Define the kind of Kubernetes resource
+metadata:
+  name: ai-app-deployment       # Name of the Deployment
+  namespace: default            # Namespace where the Deployment will be created
+spec:
+  replicas: 3                   # Number of pod replicas to be created
+  selector:
+    matchLabels:                # Define the labels used to identify pods managed by this Deployment
+      app: ai-app
+  template:
+    metadata:
+      labels:
+        app: ai-app             # Labels assigned to the pods created by this Deployment
+    spec:
+      containers:
+      - name: ai-app            # Name of the container
+        image: ai-app-docker-image:latest  # Docker image to be used for the container
+        ports:
+        - containerPort: 3000   # Ports exposed by the container
