@@ -1,1 +1,17 @@
-
+apiVersion: networking.k8s.io/v1  # Specify the API version for the Ingress resource
+kind: Ingress                      # Define the kind of Kubernetes resource
+metadata:
+  name: ai-app-ingress             # Name of the Ingress
+  namespace: default               # Namespace where the Ingress will be created
+spec:
+  rules:
+    - host: ai-app.ernest.com     # Define the host for the Ingress rule
+      http:
+        paths:
+        - path: /                  # Define the path for the Ingress rule
+          pathType: Prefix         # Specify the type of path matching
+          backend:
+            service:
+              name: ai-app-service # Name of the backend service
+              port:
+                number: 3000       # Port number of the backend service
