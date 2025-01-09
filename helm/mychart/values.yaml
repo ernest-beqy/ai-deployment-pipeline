@@ -1,1 +1,6 @@
+replicaCount: 2
+image:
+  repository: ai-app-docker-image
+  tag: latest
+  pullPolicy: Always
 
