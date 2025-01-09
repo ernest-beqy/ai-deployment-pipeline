@@ -1,1 +1,15 @@
-
+apiVersion: v1                   # Specify the API version for the ConfigMap resource
+kind: ConfigMap                  # Define the kind of Kubernetes resource
+metadata:
+  name: prometheus-federation    # Name of the ConfigMap
+  namespace: monitoring          # Namespace where the ConfigMap will be created
+data:
+  prometheus.yml: |              # The Prometheus configuration file
+    global:
+      scrape_interval: 15s       # Set the scrape interval for Prometheus
+    scrape_configs:
+      - job_name: 'kubernetes'   # Define a job for scraping Kubernetes metrics
+        static_configs:
+          - targets:             # List of targets to scrape metrics from
+            - 'node-exporter:9100'
+            - 'kube-state-metrics:8080'
