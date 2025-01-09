@@ -1,1 +1,65 @@
+# Define pipeline stages
+stages:
+  - prometheus-setup
+  - deploy-terraform
+  - deploy-kubernetes
+  - deploy-frontend
+  - deploy-backend
 
+# Prometheus setup stage
+.prometheus-setup:
+  script:
+    # Make Prometheus setup script executable and run it
+    - chmod +x ./scripts/prometheus-setup.sh
+    - ./scripts/prometheus-setup.sh
+  artifacts:
+    # Always collect Prometheus setup logs
+    when: always
+    paths:
+      - logs/prometheus-setup.log
+
+# Terraform deployment stage
+deploy-terraform:
+  stage: deploy-terraform
+  script:
+    # Initialize and apply Terraform configuration
+    - terraform -chdir=terraform init
+    - terraform -chdir=terraform apply -auto-approve
+  dependencies:
+    # This job depends on Prometheus setup job
+    - prometheus-setup
+
+# Kubernetes deployment stage
+deploy-kubernetes:
+  stage: deploy-kubernetes
+  script:
+    # Apply Kubernetes manifests for deployment, Prometheus federation and ingress
+    - kubectl apply -f kubernetes/deployment.yaml
+    - kubectl apply -f kubernetes/prometheus-federation.yaml
+    - kubectl apply -f kubernetes/ingress.yaml
+  dependencies:
+    # This job depends on Terraform deployment job
+    - deploy-terraform
+
+# Frontend deployment stage
+deploy-frontend:
+  stage: deploy-frontend
+  script:
+    # Install dependencies, build frontend and deploy with Vercel
+    - npm install
+    - npm run build
+    - vercel deploy --prod
+  only:
+    # Run this job only on main branch
+    - main
+
+# Backend deployment stage
+deploy-backend:
+  stage: deploy-backend
+  script:
+    # Install dependencies and start the backend
+    - npm install
+    - npm start
+  only:
+    # Run job only on main branch
+    - main
