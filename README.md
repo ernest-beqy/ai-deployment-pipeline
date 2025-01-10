@@ -1,3 +1,9 @@
+![Visits Badge](https://badges.pufler.dev/visits/ernest-beqy/ai-deployment-pipeline)
+![GitHub Repo Stars](https://img.shields.io/github/stars/ernest-beqy/ai-deployment-pipeline)
+![GitHub Forks](https://img.shields.io/github/forks/ernest-beqy/ai-deployment-pipeline)
+![GitHub Issues](https://img.shields.io/github/issues/ernest-beqy/ai-deployment-pipeline)
+![GitHub License](https://img.shields.io/github/license/ernest-beqy/ai-deployment-pipeline)
+
 # Fullstack AI-Powered Application Deployment on Multi-Kubernetes Clusters 🚀
 
 This repository contains the necessary configurations, scripts, and tools for
