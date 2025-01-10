@@ -11,12 +11,14 @@ stages:
   script:
     # Make Prometheus setup script executable and run it
     - chmod +x ./scripts/prometheus-setup.sh
-    - ./scripts/prometheus-setup.sh
+    - ./scripts/prometheus-setup.sh > logs/prometheus-setup.log
   artifacts:
     # Always collect Prometheus setup logs
     when: always
     paths:
       - logs/prometheus-setup.log
+    expire_in: 1 week
+  allow_failure: false
 
 # Terraform deployment stage
 deploy-terraform:
@@ -25,9 +27,15 @@ deploy-terraform:
     # Initialize and apply Terraform configuration
     - terraform -chdir=terraform init
     - terraform -chdir=terraform apply -auto-approve
+    - chmod +x ./scripts/deploy-to-clusters.sh
+    - ./scripts/deploy-to-clusters.sh > logs/kubernetes-deploy.log
   dependencies:
     # This job depends on Prometheus setup job
     - prometheus-setup
+    - terraform-deploy
+  artifacts:
+    paths:
+      - logs/kubernetes-deploy.log
 
 # Kubernetes deployment stage
 deploy-kubernetes:
@@ -52,6 +60,10 @@ deploy-frontend:
   only:
     # Run this job only on main branch
     - main
+  artifacts:
+    when: always
+    paths:
+      - build/
 
 # Backend deployment stage
 deploy-backend:
