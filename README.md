@@ -130,6 +130,7 @@ Once the application is deployed, you can access it via the LoadBalancer or Ingr
 as defined in the Kubernetes configuration.
 
 ---
+<br></br>
 
 ## CI/CD Pipeline with GitLab CI 🚀
 
@@ -140,6 +141,7 @@ The `.gitlab-ci.yml` file contains the configuration for GitLab CI. It includes:
 To trigger the pipeline, push your changes to GitLab and monitor the pipeline's progress.
 
 ---
+<br></br>
 
 ## Monitoring with Prometheus 📈
 
@@ -148,6 +150,7 @@ from the application and federates data across all clusters using the `prometheu
 file.
 
 ---
+<br></br>
 
 ## Troubleshooting 🛠️
 
@@ -159,6 +162,7 @@ using `kubectl logs` and ensure that your Kubernetes configurations are correct.
 process.
 
 ---
+<br></br>
 
 ## License 📜
 
