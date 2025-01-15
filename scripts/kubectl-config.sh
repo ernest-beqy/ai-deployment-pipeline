@@ -1,14 +1,11 @@
 #!/bin/bash
 
-echo "Configuring kubectl for multiple clusters..."
+echo "Configuring kubectl for multiple clusters..." | tee -a logs/kubectl_config.log
 
-# Add context for each cluster
-kubectl config set-context cluster-1 --cluster=cluster-1 --user=cluster-1-user --namespace=default
-kubectl config set-context cluster-2 --cluster=cluster-2 --user=cluster-2-user --namespace=default
-kubectl config set-context cluster-3 --cluster=cluster-3 --user=cluster-3-user --namespace=default
-kubectl config set-context cluster-4 --cluster=cluster-4 --user=cluster-4-user --namespace=default
-kubectl config set-context cluster-5 --cluster=cluster-5 --user=cluster-5-user --namespace=default
+clusters=("cluster-1" "cluster-2" "cluster-3" "cluster-4" "cluster-5")
 
-# Set the context for the default cluster
-kubectl config use-context cluster-1
+for cluster in "${clusters[@]}"; do
+  kubectl config set-context "$cluster" --cluster="$cluster" --user="$cluster-user" --namespace=default | tee -a logs/kubectl_config.log || { echo "Failed to set context for $cluster" | tee -a logs/kubectl_config.log; exit 1; }
+done
 
+kubectl config use-context cluster-1 | tee -a logs/kubectl_config.log || { echo "Failed to set default context to cluster-1" | tee -a logs/kubectl_config.log; exit 1; }
