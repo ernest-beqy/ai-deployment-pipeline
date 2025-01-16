@@ -1,8 +1,10 @@
 replicaCount: 5
 image:
   repository: ai-app-docker-image
-  tag: latest
-  pullPolicy: Always
+  # Specific version tag for production stability
+  tag: "v1.0.0"
+  pullPolicy: IfNotPresent
+
 resources:
   requests:
     memory: "256Mi"
@@ -10,8 +12,36 @@ resources:
   limits:
     memory: "512Mi"
     cpu: "500m"
+
 service:
   type: LoadBalancer
   port: 80
   targetPort: 3000
+  # Annotation for AWS NLB
+  annotations:
+    service.beta.kubernetes.io/aws-load-balancer-type: nlb
 
+# Health checks for better pod management
+livenessProbe:
+  httpGet:
+    path: /healthz
+    port: 3000
+  initialDelaySeconds: 3
+  periodSeconds: 3
+
+readinessProbe:
+  httpGet:
+    path: /ready
+    port: 3000
+  initialDelaySeconds: 3
+  periodSeconds: 3
+
+# ENVs
+env:
+  - name: ENV_VAR_NAME
+    value: "env_var_value"
+
+# Reference to a secret for sensitive information
+envFrom:
+  - secretRef:
+      name: ai-app-secrets
