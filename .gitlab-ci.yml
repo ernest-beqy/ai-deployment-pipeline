@@ -1,13 +1,49 @@
 # Define pipeline stages
 stages:
+  - validate
+  - build
+  - security
   - prometheus-setup
   - deploy-terraform
   - deploy-kubernetes
   - deploy-frontend
   - deploy-backend
+  - notify
+
+variables:
+  KUBECONFIG: $CI_PROJECT_DIR/.kube/config
+  TAG: $CI_COMMIT_SHA
+
+# Validation
+validate-yaml:
+  stage: validate
+  script:
+    - find . -type f -name "*.yaml" | xargs yamllint -c .yamllint
+  allow_failure: false
+
+# Build
+build:
+  stage: build
+  script:
+    - npm install
+    - npm run build
+  artifacts:
+    paths:
+      - build/
+
+# Security Scan
+security-scan:
+  stage: security
+  image: 
+    name: aquasec/trivy:latest
+    entrypoint: [""]
+  script:
+    - trivy image --severity HIGH,CRITICAL $IMAGE_REPOSITORY:$TAG
+  allow_failure: false
 
 # Prometheus setup stage
 .prometheus-setup:
+  stage: prometheus-setup
   script:
     - chmod +x ./scripts/prometheus-setup.sh
     - ./scripts/prometheus-setup.sh > logs/prometheus-setup.log 2>&1 || { echo "Prometheus setup failed"; exit 1; }
@@ -66,3 +102,11 @@ deploy-backend:
     - npm start || { echo "Backend start failed"; exit 1; }
   only:
     - main
+
+# Notifications
+notify:
+  stage: notify
+  script:
+    - echo "Sending notification..."
+    - curl -X POST -H 'Content-Type: application/json' -d '{"text":"Deployment pipeline completed!"}' $SLACK_WEBHOOK_URL
+  when: always
