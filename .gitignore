@@ -1,8 +1,44 @@
 # Logs
 logs/
+*.log
 
 # Node modules
 node_modules/
 
-# Terraform state
+# Terraform state and backups
 *.tfstate
+*.tfstate.*
+
+# Terraform plan files
+*.tfplan
+
+# Terraform temporary files
+.terraform/
+terraform.tfstate.backup
+
+# Kubernetes configuration files
+*.kubeconfig
+
+# Helm related
+charts/
+Chart.lock
+helm/values.*
+
+# General
+.DS_Store
+*.pyc
+__pycache__/
+.vscode/
+.idea/
+*.swp
+
+# Environment variables
+.env
+
+# npm package lock files
+package-lock.json
+yarn.lock
+
+# IDE configurations
+.vscode/
+.idea/
